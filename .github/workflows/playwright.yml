@@ -12,12 +12,12 @@ on:
       environment:
         description: 'Select environment'
         required: true
-        default: 'QA'
+        default: 'sit'
         type: choice
         options:
-          - QA
-          - stage
-          - dev
+          - sit
+          - perf
+          - uat
 
 jobs:
   test:
