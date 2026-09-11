@@ -10,6 +10,7 @@ import { Jsonutils } from '../src/utils/Jsonutils';
 
 test.beforeEach('Launch the application', async ({ loginPage }) => {
     await loginPage.launchLoginPage();
+    await loginPage.waitForPageLoad();
 });
 test('Login page test', async ({ loginPage }) => {
     const title: string = await loginPage.getPageTitle();

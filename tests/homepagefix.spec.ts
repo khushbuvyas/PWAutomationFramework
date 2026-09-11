@@ -6,6 +6,7 @@ import { test, expect } from '../src/fixtures/pagefixtures';
 test.beforeEach(async ({ loginPage }) => {
     await loginPage.launchLoginPage();
     await loginPage.doLogin(process.env.APP_USERNAME!, process.env.APP_PASSWORD!);
+    await loginPage.waitForPageLoad();
 })
 
 test('Verify home page title: ', async ({ homePage }) => {

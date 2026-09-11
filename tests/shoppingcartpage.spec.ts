@@ -8,6 +8,7 @@ import { Csvutils } from '../src/utils/Csvutils';
 test.beforeEach(async ({ loginPage }) => {
     await loginPage.launchLoginPage();
     await loginPage.doLogin(process.env.APP_USERNAME!, process.env.APP_PASSWORD!);
+    await loginPage.waitForPageLoad();
 })
 
 test('Verify product details on the shopping cart page ', async ({ homePage, searchResultPage, productInfoPage, shoppingCartPage }) => {

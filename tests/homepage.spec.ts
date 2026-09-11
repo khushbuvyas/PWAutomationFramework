@@ -11,6 +11,7 @@ test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
     await loginPage.launchLoginPage();
     await loginPage.doLogin(process.env.APP_USERNAME!, process.env.APP_PASSWORD!);
+    await page.waitForLoadState('load');
     homePage = new HomePage(page);
 })
 

@@ -12,6 +12,7 @@ let homePage: HomePage;
 test.beforeEach('Launch the application', async ({ page }) => {
     loginPage = new LoginPage(page);
     await loginPage.launchLoginPage();
+    await page.waitForLoadState('load');
     homePage = new HomePage(page);
 });
 test('Login page test', async ({  }) => {
