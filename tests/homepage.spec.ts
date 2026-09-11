@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
 test('Verify home page title: ', async ({ }) => {
     const title = await homePage.getPageTitle();
     console.log('Homepage title would be: ', title);
-    expect(title).toBe('Account Login');
+    expect(title).toBe('My Account');
 })
 
 test('Verify the logout link existance: ', async({})=>{

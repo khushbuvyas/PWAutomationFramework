@@ -25,7 +25,7 @@ export class ProductInfoPage extends GenericPage {
         this.map = new Map<string, string>();
         this.prodQty = page.getByRole('textbox', { name: 'Qty' });
         this.addToCartBtn = page.getByRole('button', { name: 'Add to Cart' });
-        this.successMsg = page.locator('div.alert.alert-success');
+        this.successMsg = page.locator('.alert.alert-success.alert-dismissible');
         this.shoppingCartLink = page.getByRole('link',{name:'shopping cart'}).last();
     };
 
