@@ -2,16 +2,16 @@
 import { test, expect } from '@playwright/test';
 
 
-let OAUTH_CONFIG = {
+/*let OAUTH_CONFIG = {
     tokenURL: 'https://test.api.amadeus.com/v1/security/oauth2/token',
     clientId: process.env.OAUTH_CLIENT_ID!,
     clientSecret: process.env.OAUTH_CLIENT_SECRET!,
     grantType: process.env.GRANT_TYPE!
-}
+}*/
 
-let accessToken: string;
+//let accessToken: string;
 
-test.beforeEach('POST -- generate the access token', async ({ request }) => {
+/*test.beforeEach('POST -- generate the access token', async ({ request }) => {
 
     let response = await request.post(OAUTH_CONFIG.tokenURL, {
         form: {
@@ -56,7 +56,7 @@ test('GET -- get location data', async ({ request }) => {
 
     let location1 = locationJson.data[0];
     console.log(location1);
-});
+}); */
 
 
 
