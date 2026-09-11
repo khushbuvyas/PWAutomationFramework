@@ -1,29 +1,18 @@
 name: Playwright Tests
 
 on:
-  schedule:
-    - cron: '30 21 * * 1-4'  # Mon-Fri 8PM IST
-  # push:
-  #   branches: [main]
-  # pull_request:
-  #   branches: [main]
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Select environment'
-        required: true
-        default: 'sit'
-        type: choice
-        options:
-          - sit
-          - perf
-          - uat
+  # schedule:
+  #   - cron: '30 21 * * 1-4'  # Mon-Fri 8PM IST
+    push:
+      branches: [main]
+    pull_request:
+      branches: [main]
+  workflow_dispatch: # allows manual triggering of the workflow
 
 jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment: ${{ github.event.inputs.environment || 'QA' }}
 
     steps:
       - name: Checkout code
@@ -56,8 +45,8 @@ jobs:
       - name: Run tests
         run: npx playwright test --project=chromium
         env:
-          ENV: ${{ github.event.inputs.environment || 'sit' }}
-          BASE_URL: ${{ secrets.SIT_URL }}
+          ENV: sit
+          SIT_URL: ${{ secrets.SIT_URL }}
           USERNAME: ${{ secrets.APP_USERNAME }}
           PASSWORD: ${{ secrets.APPPASSWORD }}
           API_BASE_URL: ${{ secrets.API_BASE_URI }}
