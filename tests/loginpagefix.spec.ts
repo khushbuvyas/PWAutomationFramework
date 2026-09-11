@@ -53,7 +53,7 @@ for (let data of testData) {
 //DD_3. MS excel - office latest
 //xlsx format
 //maintenance
-let loginTestDataExcel = ExcelHelper.readExcel('src/data/OpenCartTestData.xlsx', 'login');
+let loginTestDataExcel = ExcelHelper.readExcel('src/testdata/OpenCartTestData.xlsx', 'login');
 for (let row of loginTestDataExcel) {
     test(`invalid login test with excel data - ${row.username}`, async ({ loginPage }) => {
         await loginPage.doLogin(row.username, row.password);
