@@ -83,7 +83,7 @@ export class ProductInfoPage extends GenericPage {
     }
 
     async addProducttoCart(qty: number) {
-        await this.prodQty.fill('qty');
+        await this.prodQty.fill(qty.toString());
         await this.addToCartBtn.click();
     }
 
