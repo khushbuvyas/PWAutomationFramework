@@ -15,7 +15,7 @@ export class HomePage extends GenericPage {
     // constructor of the class: init the locators
     constructor(page: Page) {
         super(page);
-      //  this.headers = page.getByRole('heading', { level: 2 });
+        this.headers = page.getByRole('heading', { level: 2 });
         this.logoutlink = page.getByRole('link', { name: 'Logout' }).last();
         /* -- IGNORE --- declared in GenericPage.ts file
         // this.search = page.getByRole('textbox', { name: 'Search' });
