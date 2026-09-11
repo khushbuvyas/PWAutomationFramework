@@ -59,7 +59,7 @@ jobs:
           ENV: sit
           SIT_URL: ${{ secrets.SIT_URL }}
           APP_USERNAME: ${{ secrets.APP_USERNAME }}
-          APP_PASSWORD: ${{ secrets.APPPASSWORD }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
           API_BASE_URI: ${{ secrets.API_BASE_URI }}
           API_TOKEN: ${{ secrets.API_TOKEN }}
           OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
