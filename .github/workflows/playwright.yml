@@ -1,8 +1,8 @@
 name: Playwright Tests
 
 on:
-  schedule:
-    - cron: '30 21 * * 1-4'  # Mon-Fri 8PM IST
+  # schedule:
+  # - cron: '30 21 * * 1-4'  # Mon-Fri 8PM IST
   # push:
   #   branches: [main]
   # pull_request:
@@ -17,7 +17,7 @@ on:
         type: choice
         options:
           - sit
-          - perd
+          - perf
           - uat
 jobs:
   test:
@@ -56,7 +56,7 @@ jobs:
       - name: Run tests
         run: npx playwright test --project=chromium
         env:
-          ENV: sit
+          ENV: ${{ github.event.inputs.environment || 'sit' }}
           SIT_URL: ${{ secrets.SIT_URL }}
           APP_USERNAME: ${{ secrets.APP_USERNAME }}
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
