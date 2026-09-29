@@ -431,7 +431,7 @@ jobs:
             echo "overall=❌ SOME FAILURES" >> $GITHUB_OUTPUT
           fi
 
-          REPORT_BASE="https://naveenanimation20.github.io/OpenCartWebAPIFramework/runs/${{ github.run_id }}"
+          REPORT_BASE="https://khushbuvyas.github.io/PWAutomationFramework/runs/${{ github.run_id }}"
           echo "report_url=${REPORT_BASE}" >> $GITHUB_OUTPUT
 
       - name: Download All Reports
