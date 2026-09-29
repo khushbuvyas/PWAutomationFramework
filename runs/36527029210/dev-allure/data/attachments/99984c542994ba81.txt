@@ -1,0 +1,3 @@
+user playwrighttest2026@hmail.com is login in to the application
+search key: macbook
+[ 'MacBook Pro', 'Product 18', '9', '$2,000.00', '$18,000.00' ]
