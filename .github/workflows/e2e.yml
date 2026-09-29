@@ -191,7 +191,7 @@ jobs:
           echo "========================================="
           echo "  Running REGRESSION (all tests) on QA"
           echo "========================================="
-          npx playwright test --project=chromium --gerep @regression
+          npx playwright test --project=chromium --grep @regression
         env:
           ENV: sit
           SIT_URL: ${{ secrets.SIT_URL }}
