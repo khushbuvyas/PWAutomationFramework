@@ -11,13 +11,13 @@ test.beforeEach(async ({ loginPage }) => {
     await loginPage.waitForPageLoad();
 })
 
-test('Verify search result count ', async ({ homePage, searchResultPage }) => {
+test('@smoke @regression Verify search result count ', async ({ homePage, searchResultPage }) => {
 
     await homePage.doSearch('macbook');
     expect(await searchResultPage.getProductResultCount()).toBe(3);
 })
 
-test('Verify user is able to land on the product page', async ({ homePage, searchResultPage, page }) => {
+test('@smoke @regression Verify user is able to land on the product page', async ({ homePage, searchResultPage, page }) => {
 
     await homePage.doSearch('macbook');
     await searchResultPage.selectProduct('MacBook Pro');

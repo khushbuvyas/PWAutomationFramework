@@ -15,7 +15,7 @@ test.beforeEach('Launch the application', async ({ page }) => {
     await page.waitForLoadState('load');
     homePage = new HomePage(page);
 });
-test('Login page test', async ({  }) => {
+test.skip('Login page test', async ({  }) => {
     const title: string = await loginPage.getPageTitle();
     console.log("Login page title is : ", title);
 
@@ -23,11 +23,11 @@ test('Login page test', async ({  }) => {
 
 });
 
-test('Forgot password link existance', async ({  }) => {
+test.skip('Forgot password link existance', async ({  }) => {
     expect(await loginPage.isForgotPwdLinkExist()).toBeTruthy();
 });
 
-test('User is able to login in successfully', async ({  }) => {
+test.skip('User is able to login in successfully', async ({  }) => {
     await loginPage.doLogin(process.env.APP_USERNAME!, process.env.APP_PASSWORD!);
     // expect pending - to be implemented
     expect(await homePage.isLogoutLinkExist()).toBeTruthy();

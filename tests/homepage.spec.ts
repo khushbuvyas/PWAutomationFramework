@@ -15,17 +15,17 @@ test.beforeEach(async ({ page }) => {
     homePage = new HomePage(page);
 })
 
-test('Verify home page title: ', async ({ }) => {
+test.skip('Verify home page title: ', async ({ }) => {
     const title = await homePage.getPageTitle();
     console.log('Homepage title would be: ', title);
     expect(title).toBe('My Account');
 })
 
-test('Verify the logout link existance: ', async({})=>{
+test.skip('Verify the logout link existance: ', async({})=>{
     expect(await homePage.isLogoutLinkExist()).toBeTruthy();
 })
 
-test('Verify Home page headers: ', async ({}) =>{
+test.skip('Verify Home page headers: ', async ({}) =>{
 
     let allHeaders: string[] = await homePage.getHeaders();
     console.log("Home page headers: ", allHeaders);

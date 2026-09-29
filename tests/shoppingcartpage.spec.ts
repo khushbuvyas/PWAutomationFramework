@@ -11,7 +11,7 @@ test.beforeEach(async ({ loginPage }) => {
     await loginPage.waitForPageLoad();
 })
 
-test('Verify product details on the shopping cart page ', async ({ homePage, searchResultPage, productInfoPage, shoppingCartPage }) => {
+test('@smoke @regression Verify product details on the shopping cart page ', async ({ homePage, searchResultPage, productInfoPage, shoppingCartPage }) => {
 
     let addedProdDetails: Array<string>;
     await homePage.doSearch('macbook');

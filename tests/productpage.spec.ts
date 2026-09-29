@@ -22,7 +22,7 @@ test('Verify product image count ', async ({ homePage, searchResultPage, product
 
 })
 
-test('Verify product Information/Data ', async ({ homePage, searchResultPage, productInfoPage }) => {
+test('@smoke @regression Verify product Information/Data ', async ({ homePage, searchResultPage, productInfoPage }) => {
 
     await homePage.doSearch('macbook');
     await searchResultPage.selectProduct('MacBook Pro');

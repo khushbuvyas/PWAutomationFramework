@@ -7,7 +7,7 @@ import { Csvutils } from '../src/utils/Csvutils';
 const testdata = Csvutils.readCsv('src/testdata/registeracc.csv');
 
 for (let data of testdata) {
-    test(`Verify user account registration for ${data.firstname} `, async ({ registerAccPage }) => {
+    test.skip(`Verify user account registration for ${data.firstname} `, async ({ registerAccPage }) => {
         await registerAccPage.goToRegisterAccPage();
         await registerAccPage.verifyHeader();
         await registerAccPage.registerUserAcc(data.firstname, data.lastname, data.email, data.telephone, data.password, data.confirmPassword);

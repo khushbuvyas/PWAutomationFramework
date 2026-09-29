@@ -7,7 +7,7 @@ let response: APIResponse;
 let userData;
 let Jsonbody;
 
-test('Get the user api test - GET Call', async ({ request }) => {
+test('@smoke @regression Get the user api test - GET Call', async ({ request }) => {
 
     response = await request.get('https://gorest.co.in//public/v2/users/8610257', {
         headers: AUTH_TOKEN
@@ -18,7 +18,7 @@ test('Get the user api test - GET Call', async ({ request }) => {
     console.log(response.statusText());
 })
 
-test('Create the user api test - POST Call', async ({ request }) => {
+test('@smoke @regression Create the user api test - POST Call', async ({ request }) => {
 
     userData = {
        name: 'Peter',

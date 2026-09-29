@@ -12,7 +12,7 @@ test.beforeEach('Launch the application', async ({ loginPage }) => {
     await loginPage.launchLoginPage();
     await loginPage.waitForPageLoad();
 });
-test('Login page test', async ({ loginPage }) => {
+test('@smoke @regression Login page test', async ({ loginPage }) => {
     const title: string = await loginPage.getPageTitle();
     console.log("Login page title is : ", title);
     expect(title).toBe("Account Login");
@@ -23,7 +23,7 @@ test('Forgot password link existance', async ({ loginPage }) => {
     expect(await loginPage.isForgotPwdLinkExist()).toBeTruthy();
 });
 
-test('User is able to login in successfully', async ({ loginPage, homePage }) => {
+test('@smoke @regression User is able to login in successfully', async ({ loginPage, homePage }) => {
     await loginPage.doLogin(process.env.APP_USERNAME!, process.env.APP_PASSWORD!);
     // expect pending - to be implemented
     expect.soft(await homePage.isLogoutLinkExist()).toBeTruthy();
@@ -77,10 +77,10 @@ for (let data of testdataJson) {
 
 
 // common testcase for all pages
-test('Verify the company logo exist on the product page', async ({ genericPage}) => {
+test('@regression Verify the company logo exist on the product page', async ({ genericPage}) => {
     expect( await genericPage.isLogoVisible()).toBeTruthy();
 })
 
-test('Verify the footers for the product info page', async ({ genericPage}) => {
+test('@regression Verify the footers for the product info page', async ({ genericPage}) => {
     expect( await genericPage.getPageFootersCount()).toBe(16);
 })

@@ -6,7 +6,7 @@ let userId: number;
 
 
 // test.describe for grouping multiple testcases together and .seiral is for execution in sequece as written
-test.describe.serial('Running e2e gorest crud api tests', () => {
+test.describe.serial('@smoke @regression Running e2e gorest crud api tests', () => {
 
     // GET test:
     test('GET API -- get all users', async ({ apiUtils }) => {

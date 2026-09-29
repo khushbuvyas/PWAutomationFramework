@@ -12,13 +12,12 @@ on:
       environment:
         description: 'Run up to environment'
         required: true
-        default: 'QA'
+        default: 'sit'
         type: choice
         options:
-          - dev
-          - QA
-          - stage
-          - Prod
+          - sit
+          - perf
+          - uat
 
 jobs:
 
@@ -71,12 +70,12 @@ jobs:
     name: DEV - Sanity Tests
     needs: deploy-dev
     runs-on: ubuntu-latest
-    environment: dev
+    environment: sit
     steps:
       - name: Checkout QA repo
         uses: actions/checkout@v4
         with:
-          repository: naveenanimation20/OpenCartWebAPIFramework
+          repository: khushbuvyas/PWAutomationFramework
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -109,7 +108,7 @@ jobs:
           echo "========================================="
           npx playwright test --project=chromium --grep @smoke
         env:
-          ENV: dev
+          ENV: sit
           BASE_URL: ${{ secrets.BASE_URL }}
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
@@ -156,12 +155,12 @@ jobs:
     name: QA - Regression Tests
     needs: deploy-qa
     runs-on: ubuntu-latest
-    environment: QA
+    environment: sit
     steps:
       - name: Checkout QA repo
         uses: actions/checkout@v4
         with:
-          repository: naveenanimation20/OpenCartWebAPIFramework
+          repository: khushbuvyas/PWAutomationFramework
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -192,9 +191,9 @@ jobs:
           echo "========================================="
           echo "  Running REGRESSION (all tests) on QA"
           echo "========================================="
-          npx playwright test --project=chromium
+          npx playwright test --project=chromium --gerep @regression
         env:
-          ENV: qa
+          ENV: sit
           BASE_URL: ${{ secrets.BASE_URL }}
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
@@ -241,12 +240,12 @@ jobs:
     name: STAGE - Sanity Tests
     needs: deploy-stage
     runs-on: ubuntu-latest
-    environment: stage
+    environment: uat
     steps:
-      - name: Checkout QA repo
+      - name: Checkout STAGE repo
         uses: actions/checkout@v4
         with:
-          repository: naveenanimation20/OpenCartWebAPIFramework
+          repository: khushbuvyas/PWAutomationFramework
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -277,9 +276,9 @@ jobs:
           echo "========================================="
           echo "  Running SANITY @smoke on STAGE"
           echo "========================================="
-          npx playwright test --project=chromium --grep @smoke
+          npx playwright test --project=chromium --grep @regression
         env:
-          ENV: stage
+          ENV: uat
           BASE_URL: ${{ secrets.BASE_URL }}
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
@@ -318,7 +317,7 @@ jobs:
     name: Deploy to PROD
     needs: sanity-stage
     runs-on: ubuntu-latest
-    environment: Prod
+    environment: uat
     steps:
       - name: Deploy to PROD
         run: echo "Deployed to PROD ✅"
@@ -327,12 +326,12 @@ jobs:
     name: PROD - Smoke Tests
     needs: deploy-prod
     runs-on: ubuntu-latest
-    environment: Prod
+    environment: uat
     steps:
       - name: Checkout QA repo
         uses: actions/checkout@v4
         with:
-          repository: naveenanimation20/OpenCartWebAPIFramework
+          repository: khushbuvyas/PWAutomationFramework
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -365,7 +364,7 @@ jobs:
           echo "========================================="
           npx playwright test --project=chromium --grep @smoke
         env:
-          ENV: prod
+          ENV: uat
           BASE_URL: ${{ secrets.BASE_URL }}
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
