@@ -109,10 +109,10 @@ jobs:
           npx playwright test --project=chromium --grep @smoke
         env:
           ENV: sit
-          BASE_URL: ${{ secrets.BASE_URL }}
-          USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          SIT_URL: ${{ secrets.SIT_URL }}
+          APP_USERNAME: ${{ secrets.APP_USERNAME }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+          API_BASE_URI: ${{ secrets.API_BASE_URI }}
           API_TOKEN: ${{ secrets.API_TOKEN }}
           OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
           OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
@@ -194,10 +194,10 @@ jobs:
           npx playwright test --project=chromium --gerep @regression
         env:
           ENV: sit
-          BASE_URL: ${{ secrets.BASE_URL }}
-          USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          SIT_URL: ${{ secrets.SIT_URL }}
+          APP_USERNAME: ${{ secrets.APP_USERNAME }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+          API_BASE_URI: ${{ secrets.API_BASE_URI }}
           API_TOKEN: ${{ secrets.API_TOKEN }}
           OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
           OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
@@ -279,10 +279,10 @@ jobs:
           npx playwright test --project=chromium --grep @regression
         env:
           ENV: uat
-          BASE_URL: ${{ secrets.BASE_URL }}
-          USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          SIT_URL: ${{ secrets.SIT_URL }}
+          APP_USERNAME: ${{ secrets.APP_USERNAME }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+          API_BASE_URI: ${{ secrets.API_BASE_URI }}
           API_TOKEN: ${{ secrets.API_TOKEN }}
           OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
           OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
@@ -365,10 +365,10 @@ jobs:
           npx playwright test --project=chromium --grep @smoke
         env:
           ENV: uat
-          BASE_URL: ${{ secrets.BASE_URL }}
-          USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          SIT_URL: ${{ secrets.SIT_URL }}
+          APP_USERNAME: ${{ secrets.APP_USERNAME }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+          API_BASE_URI: ${{ secrets.API_BASE_URI }}
           API_TOKEN: ${{ secrets.API_TOKEN }}
           OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
           OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
