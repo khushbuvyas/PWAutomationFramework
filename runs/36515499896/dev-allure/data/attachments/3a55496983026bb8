@@ -1,0 +1,1 @@
+{"method":"GET","url":"/public/v2/users","duration":5,"requestHeaders":{"Authorization":"Bearer 4e74530924a1711a8f94298ad6d243cb050c04814ca2b79fc4030b02ecf6e11f"},"responseBody":"Request failed: apiRequestContext.fetch: Invalid URL"}
