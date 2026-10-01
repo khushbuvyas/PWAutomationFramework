@@ -231,12 +231,12 @@ pipeline {
                         string(credentialsId: 'api-token', variable: 'API_TOKEN'),
                         string(credentialsId: 'oauth-client-id', variable: 'OAUTH_CLIENT_ID'),
                         string(credentialsId: 'oauth-client-secret', variable: 'OAUTH_CLIENT_SECRET'),
-                        string(credentialsId: 'uat-base-url', variable: 'UAT_URL'),
+                        string(credentialsId: 'uat-base-url', variable: 'SIT_URL'),
                         string(credentialsId: 'api-base-uri', variable: 'API_BASE_URI')
                     ]) {
                         sh '''
-                            ENV=sit \
-                            UAT_URL=$UAT_URL \
+                            ENV=uat \
+                            SIT_URL=$SIT_URL \
                             APP_USERNAME=$APP_USERNAME \
                             APP_PASSWORD=$APP_PASSWORD \
                             API_BASE_URI=$API_BASE_URI \
@@ -377,7 +377,7 @@ pipeline {
 
                 // Email Notification
                 emailext(
-                    to: 'naveenanimation20@gmail.com,training@naveenautomationlabs.com',
+                    to: 'khushbu.h.joshi@gmail.com',
                     subject: "🎭 CI/CD Pipeline — ${statusEmoji} ${buildStatus} — Build #${env.BUILD_NUMBER}",
                     mimeType: 'text/html',
                     body: """
