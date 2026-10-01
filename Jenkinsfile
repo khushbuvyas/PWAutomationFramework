@@ -18,23 +18,13 @@ pipeline {
     parameters {
         choice(
             name: 'ENVIRONMENT',
-            choices: ['QA', 'dev', 'stage', 'Prod'],
+            choices: ['sit', 'uat', 'perf'],
             description: 'Select environment to run tests'
-        )
-        choice(
-            name: 'BROWSER',
-            choices: ['chromium', 'firefox', 'webkit'],
-            description: 'Select browser'
-        )
-        choice(
-            name: 'TEST_SUITE',
-            choices: ['all', 'smoke', 'regression', 'api-smoke'],
-            description: 'Select test suite'
         )
     }
 
     environment {
-        SLACK_CHANNEL = '#general'
+        SLACK_CHANNEL = '#all-general'
     }
 
     options {
