@@ -188,7 +188,8 @@ pipeline {
                 always {
                     sh 'mkdir -p reports-qa/html reports-qa/allure'
                     sh 'cp -r qa-tests/reports/html-report/* reports-qa/html/ || true'
-                    sh 'allure generate qa-tests/allure-results --clean -o reports-qa/allure || true'
+                    sh 'rm -rf reports-qa/allure'
+                    sh 'npx allure generate qa-tests/allure-results -o reports-qa/allure || true'
                     publishHTML(target: [
                         reportName: 'QA Regression - PW HTML Report',
                         reportDir: 'reports-qa/html',
@@ -254,7 +255,8 @@ pipeline {
                 always {
                     sh 'mkdir -p reports-stage/html reports-stage/allure'
                     sh 'cp -r qa-tests/reports/html-report/* reports-stage/html/ || true'
-                    sh 'allure generate qa-tests/allure-results --clean -o reports-stage/allure || true'
+                    sh 'rm -rf reports-stage/allure'
+                    sh 'npx allure generate qa-tests/allure-results -o reports-stage/allure || true'
                     publishHTML(target: [
                         reportName: 'STAGE Sanity - PW HTML Report',
                         reportDir: 'reports-stage/html',
@@ -328,7 +330,8 @@ pipeline {
                 always {
                     sh 'mkdir -p reports-prod/html reports-prod/allure'
                     sh 'cp -r qa-tests/reports/html-report/* reports-prod/html/ || true'
-                    sh 'allure generate qa-tests/allure-results --clean -o reports-prod/allure || true'
+                    sh 'rm -rf reports-prod/allure'
+                    sh 'npx allure generate qa-tests/allure-results -o reports-prod/allure || true'
                     publishHTML(target: [
                         reportName: 'PROD Smoke - PW HTML Report',
                         reportDir: 'reports-prod/html',
