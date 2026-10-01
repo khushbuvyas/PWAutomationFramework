@@ -9,7 +9,7 @@ let Jsonbody;
 
 test('@smoke @regression Get the user api test - GET Call', async ({ request }) => {
 
-    response = await request.get('https://gorest.co.in//public/v2/users/8610257', {
+    response = await request.get('https://gorest.co.in//public/v2/users/8645065', {
         headers: AUTH_TOKEN
     })
 
