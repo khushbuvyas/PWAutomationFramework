@@ -121,7 +121,8 @@ pipeline {
                 always {
                     sh 'mkdir -p reports-dev/html reports-dev/allure'
                     sh 'cp -r qa-tests/reports/html-report/* reports-dev/html/ || true'
-                    sh 'npx allure generate qa-tests/allure-results --clean -o reports-dev/allure || true'
+                    sh 'rm -rf reports-dev/allure'
+                    sh 'npx allure generate qa-tests/allure-results -o reports-dev/allure || true'
                     publishHTML(target: [
                         reportName: 'DEV Sanity - PW HTML Report',
                         reportDir: 'reports-dev/html',
