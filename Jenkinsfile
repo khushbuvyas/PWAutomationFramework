@@ -103,7 +103,7 @@ pipeline {
                     sh """
                         docker run --rm \
                             -e CI=true \
-                            -e ENV=dev \
+                            -e ENV=sit \
                             -e BASE_URL=${SIT_URL} \
                             -e USERNAME=${APP_USERNAME} \
                             -e PASSWORD=${APP_PASSWORD} \
