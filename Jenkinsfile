@@ -105,8 +105,8 @@ pipeline {
                             -e CI=true \
                             -e ENV=sit \
                             -e SIT_URL=${SIT_URL} \
-                            -e USERNAME=${APP_USERNAME} \
-                            -e PASSWORD=${APP_PASSWORD} \
+                            -e APP_USERNAME=${APP_USERNAME} \
+                            -e APP_PASSWORD=${APP_PASSWORD} \
                             -e API_BASE_URI=${API_BASE_URI} \
                             -e API_TOKEN=${API_TOKEN} \
                             -e OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} \
@@ -170,8 +170,8 @@ pipeline {
                             -e CI=true \
                             -e ENV=qa \
                             -e SIT_URL=${SIT_URL} \
-                            -e USERNAME=${APP_USERNAME} \
-                            -e PASSWORD=${APP_PASSWORD} \
+                            -e APP_USERNAME=${APP_USERNAME} \
+                            -e APP_PASSWORD=${APP_PASSWORD} \
                             -e API_BASE_URI=${API_BASE_URI} \
                             -e API_TOKEN=${API_TOKEN} \
                             -e OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} \
