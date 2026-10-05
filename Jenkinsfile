@@ -1,7 +1,7 @@
-
 // ═══════════════════════════════════════════════════════════════
-// Jenkinsfile — Master CI/CD Pipeline
+// Jenkinsfile — Master CI/CD Pipeline (Docker)
 // Playwright TypeScript Framework
+// Tests run inside Docker containers
 // Naveen Automation Labs
 // ═══════════════════════════════════════════════════════════════
 
@@ -9,7 +9,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS-24'
+         nodejs 'NodeJS-24'
         maven 'MAVEN_HOME'
         jdk 'JAVA_HOME'
         allure 'Allure'
@@ -21,10 +21,12 @@ pipeline {
             choices: ['sit', 'uat', 'perf'],
             description: 'Select environment to run tests'
         )
+        
     }
 
     environment {
-        SLACK_CHANNEL = '#all-general'
+        SLACK_CHANNEL  = '#all-general'
+        DOCKER_IMAGE   = 'pw-framework'
     }
 
     options {
@@ -58,19 +60,19 @@ pipeline {
         }
 
         // ═════════════════════════════════════════════════
-        // STAGE 2: INSTALL PLAYWRIGHT DEPENDENCIES
+        // STAGE 2: BUILD DOCKER IMAGE
         // ═════════════════════════════════════════════════
-        stage('Install Dependencies') {
+        stage('Build Docker Image') {
             steps {
                 echo "========================================="
-                echo "  Installing Playwright Dependencies"
+                echo "  Building Playwright Docker Image"
                 echo "========================================="
                 dir('qa-tests') {
                     git url: 'https://github.com/khushbuvyas/PWAutomationFramework.git',
                         branch: 'main'
-                    sh 'npm ci'
-                    sh 'npx playwright install --with-deps chromium'
+                    sh "docker build -t ${DOCKER_IMAGE} ."
                 }
+                sh "docker images | grep ${DOCKER_IMAGE}"
             }
         }
 
@@ -79,50 +81,48 @@ pipeline {
         // ═════════════════════════════════════════════════
         stage('Deploy to DEV') {
             steps {
-                echo "========================================="
-                echo "  Deploying to DEV..."
-                echo "========================================="
-                echo "DEV deployment complete ✅"
+                echo "Deploying to DEV... ✅"
             }
         }
 
         stage('DEV - Sanity Tests') {
             steps {
                 echo "========================================="
-                echo "  Running SANITY @smoke on DEV"
+                echo "  Running SANITY @smoke on DEV (Docker)"
                 echo "========================================="
-                dir('qa-tests') {
-                    sh 'rm -rf allure-results reports'
-                    withCredentials([
-                        usernamePassword(credentialsId: 'sit-credentials',
+                sh 'mkdir -p reports-dev/html allure-results-dev'
+                withCredentials([
+                   usernamePassword(credentialsId: 'sit-credentials',
                             usernameVariable: 'APP_USERNAME', passwordVariable: 'APP_PASSWORD'),
                         string(credentialsId: 'api-token', variable: 'API_TOKEN'),
                         string(credentialsId: 'oauth-client-id', variable: 'OAUTH_CLIENT_ID'),
                         string(credentialsId: 'oauth-client-secret', variable: 'OAUTH_CLIENT_SECRET'),
                         string(credentialsId: 'sit-base-url', variable: 'SIT_URL'),
                         string(credentialsId: 'api-base-uri', variable: 'API_BASE_URI')
-                    ]) {
-                        sh '''
-                            ENV=sit \
-                            SIT_URL=$SIT_URL \
-                            APP_USERNAME=$APP_USERNAME \
-                            APP_PASSWORD=$APP_PASSWORD \
-                            API_BASE_URI=$API_BASE_URI \
-                            API_TOKEN=$API_TOKEN \
-                            OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID \
-                            OAUTH_CLIENT_SECRET=$OAUTH_CLIENT_SECRET \
-                            GRANT_TYPE=client_credentials \
+                ]) {
+                    sh """
+                        docker run --rm \
+                            -e CI=true \
+                            -e ENV=dev \
+                            -e BASE_URL=${SIT_URL} \
+                            -e USERNAME=${APP_USERNAME} \
+                            -e PASSWORD=${APP_PASSWORD} \
+                            -e API_BASE_URL=${API_BASE_URI} \
+                            -e API_TOKEN=${API_TOKEN} \
+                            -e OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} \
+                            -e OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} \
+                            -e GRANT_TYPE=client_credentials \
+                            -v \${WORKSPACE}/reports-dev/html:/app/reports/html-report \
+                            -v \${WORKSPACE}/allure-results-dev:/app/allure-results \
+                            ${DOCKER_IMAGE} \
                             npx playwright test --project=chromium --grep @smoke
-                        '''
-                    }
+                    """
                 }
             }
             post {
                 always {
-                    sh 'mkdir -p reports-dev/html reports-dev/allure'
-                    sh 'cp -r qa-tests/reports/html-report/* reports-dev/html/ || true'
-                    sh 'rm -rf reports-dev/allure'
-                    sh 'npx allure generate qa-tests/allure-results -o reports-dev/allure || true'
+                    sh 'mkdir -p reports-dev/allure'
+                    sh 'npx allure generate allure-results-dev --clean -o reports-dev/allure || true'
                     publishHTML(target: [
                         reportName: 'DEV Sanity - PW HTML Report',
                         reportDir: 'reports-dev/html',
@@ -146,21 +146,17 @@ pipeline {
         // ═════════════════════════════════════════════════
         stage('Deploy to QA') {
             steps {
-                echo "========================================="
-                echo "  Deploying to QA..."
-                echo "========================================="
-                echo "QA deployment complete ✅"
+                echo "Deploying to QA... ✅"
             }
         }
 
         stage('QA - Regression Tests') {
             steps {
                 echo "========================================="
-                echo "  Running REGRESSION (all tests) on QA"
+                echo "  Running REGRESSION on QA (Docker)"
                 echo "========================================="
-                dir('qa-tests') {
-                    sh 'rm -rf allure-results reports'
-                    withCredentials([
+                sh 'mkdir -p reports-qa/html allure-results-qa'
+                withCredentials([
                         usernamePassword(credentialsId: 'sit-credentials',
                             usernameVariable: 'APP_USERNAME', passwordVariable: 'APP_PASSWORD'),
                         string(credentialsId: 'api-token', variable: 'API_TOKEN'),
@@ -168,28 +164,30 @@ pipeline {
                         string(credentialsId: 'oauth-client-secret', variable: 'OAUTH_CLIENT_SECRET'),
                         string(credentialsId: 'sit-base-url', variable: 'SIT_URL'),
                         string(credentialsId: 'api-base-uri', variable: 'API_BASE_URI')
-                    ]) {
-                        sh '''
-                            ENV=sit \
-                            SIT_URL=$SIT_URL \
-                            APP_USERNAME=$APP_USERNAME \
-                            APP_PASSWORD=$APP_PASSWORD \
-                            API_BASE_URI=$API_BASE_URI \
-                            API_TOKEN=$API_TOKEN \
-                            OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID \
-                            OAUTH_CLIENT_SECRET=$OAUTH_CLIENT_SECRET \
-                            GRANT_TYPE=client_credentials \
+                ]) {
+                    sh """
+                        docker run --rm \
+                            -e CI=true \
+                            -e ENV=qa \
+                            -e BASE_URL=${SIT_URL} \
+                            -e USERNAME=${APP_USERNAME} \
+                            -e PASSWORD=${APP_PASSWORD} \
+                            -e API_BASE_URL=${API_BASE_URI} \
+                            -e API_TOKEN=${API_TOKEN} \
+                            -e OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} \
+                            -e OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} \
+                            -e GRANT_TYPE=client_credentials \
+                            -v \${WORKSPACE}/reports-qa/html:/app/reports/html-report \
+                            -v \${WORKSPACE}/allure-results-qa:/app/allure-results \
+                            ${DOCKER_IMAGE} \
                             npx playwright test --project=chromium --grep @regression
-                        '''
-                    }
+                    """
                 }
             }
             post {
                 always {
-                    sh 'mkdir -p reports-qa/html reports-qa/allure'
-                    sh 'cp -r qa-tests/reports/html-report/* reports-qa/html/ || true'
-                    sh 'rm -rf reports-qa/allure'
-                    sh 'npx allure generate qa-tests/allure-results -o reports-qa/allure || true'
+                    sh 'mkdir -p reports-qa/allure'
+                    sh 'npx allure generate allure-results-qa --clean -o reports-qa/allure || true'
                     publishHTML(target: [
                         reportName: 'QA Regression - PW HTML Report',
                         reportDir: 'reports-qa/html',
@@ -207,152 +205,10 @@ pipeline {
                 }
             }
         }
-
-        // ═════════════════════════════════════════════════
-        // STAGE 5: DEPLOY STAGE + SANITY
-        // ═════════════════════════════════════════════════
-        stage('Deploy to STAGE') {
-            steps {
-                echo "========================================="
-                echo "  Deploying to STAGE..."
-                echo "========================================="
-                echo "STAGE deployment complete ✅"
-            }
-        }
-
-        stage('STAGE - Sanity Tests') {
-            steps {
-                echo "========================================="
-                echo "  Running SANITY @smoke on STAGE"
-                echo "========================================="
-                dir('qa-tests') {
-                    sh 'rm -rf allure-results reports'
-               withCredentials([
-                        usernamePassword(credentialsId: 'sit-credentials',
-                            usernameVariable: 'APP_USERNAME', passwordVariable: 'APP_PASSWORD'),
-                        string(credentialsId: 'api-token', variable: 'API_TOKEN'),
-                        string(credentialsId: 'oauth-client-id', variable: 'OAUTH_CLIENT_ID'),
-                        string(credentialsId: 'oauth-client-secret', variable: 'OAUTH_CLIENT_SECRET'),
-                        string(credentialsId: 'uat-base-url', variable: 'SIT_URL'),
-                        string(credentialsId: 'api-base-uri', variable: 'API_BASE_URI')
-                    ]) {
-                        sh '''
-                            ENV=uat \
-                            SIT_URL=$SIT_URL \
-                            APP_USERNAME=$APP_USERNAME \
-                            APP_PASSWORD=$APP_PASSWORD \
-                            API_BASE_URI=$API_BASE_URI \
-                            API_TOKEN=$API_TOKEN \
-                            OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID \
-                            OAUTH_CLIENT_SECRET=$OAUTH_CLIENT_SECRET \
-                            GRANT_TYPE=client_credentials \
-                            npx playwright test --project=chromium --grep @regression
-                        '''
-                    }
-                }
-            }
-            post {
-                always {
-                    sh 'mkdir -p reports-stage/html reports-stage/allure'
-                    sh 'cp -r qa-tests/reports/html-report/* reports-stage/html/ || true'
-                    sh 'rm -rf reports-stage/allure'
-                    sh 'npx allure generate qa-tests/allure-results -o reports-stage/allure || true'
-                    publishHTML(target: [
-                        reportName: 'STAGE Sanity - PW HTML Report',
-                        reportDir: 'reports-stage/html',
-                        reportFiles: 'index.html',
-                        keepAll: true,
-                        alwaysLinkToLastBuild: true
-                    ])
-                    publishHTML(target: [
-                        reportName: 'STAGE Sanity - Allure Report',
-                        reportDir: 'reports-stage/allure',
-                        reportFiles: 'index.html',
-                        keepAll: true,
-                        alwaysLinkToLastBuild: true
-                    ])
-                }
-            }
-        }
-
-        // ═════════════════════════════════════════════════
-        // STAGE 6: DEPLOY PROD + SMOKE (with approval)
-        // ═════════════════════════════════════════════════
-        stage('Approval for PROD') {
-            steps {
-                input message: 'Deploy to PROD?',
-                    ok: 'Yes, Deploy!',
-                    submitter: 'admin,naveen'
-            }
-        }
-
-        stage('Deploy to PROD') {
-            steps {
-                echo "========================================="
-                echo "  Deploying to PROD..."
-                echo "========================================="
-                echo "PROD deployment complete ✅"
-            }
-        }
-
-        stage('PROD - Smoke Tests') {
-            steps {
-                echo "========================================="
-                echo "  Running SMOKE @smoke on PROD"
-                echo "========================================="
-                dir('qa-tests') {
-                    sh 'rm -rf allure-results reports'
-                    withCredentials([
-                        usernamePassword(credentialsId: 'sit-credentials',
-                            usernameVariable: 'APP_USERNAME', passwordVariable: 'APP_PASSWORD'),
-                        string(credentialsId: 'api-token', variable: 'API_TOKEN'),
-                        string(credentialsId: 'oauth-client-id', variable: 'OAUTH_CLIENT_ID'),
-                        string(credentialsId: 'oauth-client-secret', variable: 'OAUTH_CLIENT_SECRET'),
-                        string(credentialsId: 'sit-base-url', variable: 'SIT_URL'),
-                        string(credentialsId: 'api-base-uri', variable: 'API_BASE_URI')
-                    ]) {
-                        sh '''
-                            ENV=sit \
-                            SIT_URL=$SIT_URL \
-                            APP_USERNAME=$APP_USERNAME \
-                            APP_PASSWORD=$APP_PASSWORD \
-                            API_BASE_URI=$API_BASE_URI \
-                            API_TOKEN=$API_TOKEN \
-                            OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID \
-                            OAUTH_CLIENT_SECRET=$OAUTH_CLIENT_SECRET \
-                            GRANT_TYPE=client_credentials \
-                            npx playwright test --project=chromium --grep @smoke
-                        '''
-                    }
-                }
-            }
-            post {
-                always {
-                    sh 'mkdir -p reports-prod/html reports-prod/allure'
-                    sh 'cp -r qa-tests/reports/html-report/* reports-prod/html/ || true'
-                    sh 'rm -rf reports-prod/allure'
-                    sh 'npx allure generate qa-tests/allure-results -o reports-prod/allure || true'
-                    publishHTML(target: [
-                        reportName: 'PROD Smoke - PW HTML Report',
-                        reportDir: 'reports-prod/html',
-                        reportFiles: 'index.html',
-                        keepAll: true,
-                        alwaysLinkToLastBuild: true
-                    ])
-                    publishHTML(target: [
-                        reportName: 'PROD Smoke - Allure Report',
-                        reportDir: 'reports-prod/allure',
-                        reportFiles: 'index.html',
-                        keepAll: true,
-                        alwaysLinkToLastBuild: true
-                    ])
-                }
-            }
-        }
-    }
+   }
 
     // ═════════════════════════════════════════════════════
-    // POST — EMAIL + SLACK NOTIFICATIONS
+    // POST — CLEANUP + EMAIL + SLACK
     // ═════════════════════════════════════════════════════
     post {
         always {
@@ -366,11 +222,11 @@ pipeline {
                     channel: env.SLACK_CHANNEL,
                     color: statusColor,
                     message: """
-🎭 *Playwright CI/CD Pipeline Report*
+🎭 *Playwright CI/CD Pipeline Report* 🐳
 
 *Overall: ${statusEmoji} ${buildStatus}*
+*Mode:* `Docker Containers`
 *Environment:* `${params.ENVIRONMENT}`
-*Branch:* `${env.BRANCH_NAME ?: 'main'}`
 *Build:* #${env.BUILD_NUMBER}
 *Duration:* ${currentBuild.durationString.replace(' and counting', '')}
 
@@ -382,35 +238,34 @@ pipeline {
                 // Email Notification
                 emailext(
                     to: 'khushbu.h.joshi@gmail.com',
-                    subject: "🎭 CI/CD Pipeline — ${statusEmoji} ${buildStatus} — Build #${env.BUILD_NUMBER}",
+                    subject: "🎭 CI/CD (Docker) — ${statusEmoji} ${buildStatus} — Build #${env.BUILD_NUMBER}",
                     mimeType: 'text/html',
                     body: """
                         <html>
                         <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5;">
                             <div style="max-width: 700px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden;">
                                 <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; padding: 30px; text-align: center;">
-                                    <h1 style="margin: 0; font-size: 24px;">🎭 Playwright CI/CD Dashboard</h1>
-                                    <p style="margin: 8px 0 0; opacity: 0.8;">Master Pipeline Report</p>
+                                    <h1 style="margin: 0; font-size: 24px;">🎭 Playwright CI/CD Dashboard 🐳</h1>
+                                    <p style="margin: 8px 0 0; opacity: 0.8;">Docker Pipeline Report</p>
                                     <span style="display: inline-block; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-top: 12px; background: ${buildStatus == 'SUCCESS' ? '#28a745' : '#dc3545'}; color: white;">
                                         ${statusEmoji} ${buildStatus}
                                     </span>
                                 </div>
                                 <div style="padding: 24px;">
                                     <table style="width: 100%; border-collapse: collapse;">
+                                        <tr><td style="padding: 10px; color: #666;">Mode</td><td style="padding: 10px; font-weight: bold;">🐳 Docker Containers</td></tr>
                                         <tr><td style="padding: 10px; color: #666;">Environment</td><td style="padding: 10px; font-weight: bold;">${params.ENVIRONMENT}</td></tr>
                                         <tr><td style="padding: 10px; color: #666;">Build</td><td style="padding: 10px; font-weight: bold;">#${env.BUILD_NUMBER}</td></tr>
                                         <tr><td style="padding: 10px; color: #666;">Duration</td><td style="padding: 10px; font-weight: bold;">${currentBuild.durationString.replace(' and counting', '')}</td></tr>
-                                        <tr><td style="padding: 10px; color: #666;">Triggered by</td><td style="padding: 10px; font-weight: bold;">${currentBuild.getBuildCauses()[0]?.shortDescription ?: 'Manual'}</td></tr>
                                     </table>
                                 </div>
                                 <div style="background: #f8f9fa; padding: 20px 24px; border-top: 1px solid #eee;">
-                                    <h3 style="margin: 0 0 12px;">📊 Reports (8 reports per build)</h3>
-                                    <p style="color: #666; font-size: 13px; margin: 0 0 12px;">Click below to open Jenkins build page → Reports in sidebar</p>
+                                    <h3 style="margin: 0 0 12px;">📊 Reports</h3>
                                     <a href="${env.BUILD_URL}" style="display: inline-block; padding: 10px 20px; background: #1a1a2e; color: white; text-decoration: none; border-radius: 6px; margin: 4px;">📁 Open Jenkins Build</a>
                                     <a href="${env.BUILD_URL}console" style="display: inline-block; padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; margin: 4px;">🔍 Console Logs</a>
                                 </div>
-                                <div style="text-align: center; padding: 16px; color: #999; font-size: 12px; border-top: 1px solid #eee;">
-                                    Naveen Automation Labs | Playwright Framework
+                                <div style="text-align: center; padding: 16px; color: #999; font-size: 12px;">
+                                    Khushbu Vyas | Playwright Framework
                                 </div>
                             </div>
                         </body>
@@ -418,15 +273,18 @@ pipeline {
                     """
                 )
             }
+
+            // Cleanup Docker image after pipeline
+            sh "docker rmi ${DOCKER_IMAGE} || true"
         }
         success {
             echo '═══════════════════════════════════════════'
-            echo '  PIPELINE: ✅ SUCCESS'
+            echo '  PIPELINE: ✅ SUCCESS (Docker)'
             echo '═══════════════════════════════════════════'
         }
         failure {
             echo '═══════════════════════════════════════════'
-            echo '  PIPELINE: ❌ FAILED'
+            echo '  PIPELINE: ❌ FAILED (Docker)'
             echo '═══════════════════════════════════════════'
         }
     }
