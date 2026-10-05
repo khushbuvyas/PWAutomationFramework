@@ -104,10 +104,10 @@ pipeline {
                         docker run --rm \
                             -e CI=true \
                             -e ENV=sit \
-                            -e BASE_URL=${SIT_URL} \
+                            -e SIT_URL=${SIT_URL} \
                             -e USERNAME=${APP_USERNAME} \
                             -e PASSWORD=${APP_PASSWORD} \
-                            -e API_BASE_URL=${API_BASE_URI} \
+                            -e API_BASE_URI=${API_BASE_URI} \
                             -e API_TOKEN=${API_TOKEN} \
                             -e OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} \
                             -e OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} \
@@ -169,10 +169,10 @@ pipeline {
                         docker run --rm \
                             -e CI=true \
                             -e ENV=qa \
-                            -e BASE_URL=${SIT_URL} \
+                            -e SIT_URL=${SIT_URL} \
                             -e USERNAME=${APP_USERNAME} \
                             -e PASSWORD=${APP_PASSWORD} \
-                            -e API_BASE_URL=${API_BASE_URI} \
+                            -e API_BASE_URI=${API_BASE_URI} \
                             -e API_TOKEN=${API_TOKEN} \
                             -e OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} \
                             -e OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} \
